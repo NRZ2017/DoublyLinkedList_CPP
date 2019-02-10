@@ -8,8 +8,8 @@ class Node
 {
 public:
 	T Value;
-	unique_ptr<Node<T>> Next;
-	Node<T>* Prev;
+	shared_ptr<Node<T>> Next;
+	shared_ptr<Node<T>> Prev;
 
 	
 	//constructor

@@ -3,6 +3,14 @@
 int main()
 {
 	List<int> nums;
+
+	while (true)
+	{
+		nums.AddFirst(1);
+		nums.RemoveFront();
+	}
+
+
 	nums.AddLast(3);
 	nums.AddLast(4);
 	nums.AddLast(5);

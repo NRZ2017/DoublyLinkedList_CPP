@@ -12,12 +12,11 @@ private:
 	int count;
 
 public:
-	Node<T>* Head;
-
+	std::shared_ptr<Node<T>> Head;
 
 	List()
 	{
-		Head == nullptr;
+		Head = nullptr;
 	}
 
 	void AddLast(T value)
@@ -25,26 +24,28 @@ public:
 		count++;
 		if (Head == nullptr)
 		{
-			Head = new Node<T>(value);
-			Head->Next.reset(Head);
+
+			Head = std::make_shared<Node<T>>(value);
+			Head->Next = Head;
 			Head->Prev = Head;
 			return;
 		}
 
+		Node<T>* tail = Head->Prev.get();
 		Node<T>* temp = new Node<T>(value);
 
-		temp->Next = move(Head->Prev->Next);
-		temp->Prev = Head->Prev;
-		Head->Prev = temp;
+		temp->Next = move(tail->Next);
+		temp->Prev = move(Head->Prev);
+
+		tail->Next.reset(temp);
+		Head->Prev.reset(temp);
 	}
 
 	void AddFirst(T value)
 	{
 		AddLast(value);
-		Head = Head->Prev;
+	  Head.reset(Head->Prev.get());
 	}
-
-
 
 	//Circular
 	bool RemoveFront()
@@ -53,12 +54,22 @@ public:
 		{
 			return false;
 		}
+		if (count == 1)
+		{
+			Head->Next.reset();
+			Head->Prev.reset();
+			return true;
+		}
 
-		Node<T>* temp = Head;
-		temp = Head->Next.get();
-		Head = Head->Next.get();
-		Head = temp;
-		Head->Prev = nullptr;
+		Node<T>* next = Head->Next.get();
+		Node<T>* prev = Head->Prev.get();
+
+		next->Prev = move(Head->Prev);
+		prev->Next = move(Head->Next);
+
+		//delete Head; //possibly not required?
+
+		Head.reset(next);
 		count--;
 		return true;
 	}
@@ -70,9 +81,10 @@ public:
 			return false;
 		}
 
-		Node<T>* Tail = Head->Prev;
-		Tail->Prev->Next = nullptr;
-		Tail = Tail->Prev;
+		Node<T>* tail = Head->Prev.get();
+		Node<T>* before = Head->Prev->Prev.get();
+		before->Next = tail->Next;
+		Head->Prev = tail->Prev;
 		count--;
 		return true;
 	}
