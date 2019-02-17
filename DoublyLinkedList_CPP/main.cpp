@@ -4,11 +4,11 @@ int main()
 {
 	List<int> nums;
 
-	while (true)
+	/*while (true)
 	{
 		nums.AddFirst(1);
 		nums.RemoveFront();
-	}
+	}*/
 
 
 	nums.AddLast(3);
@@ -17,6 +17,7 @@ int main()
 	nums.RemoveEnd();
 	nums.RemoveFront();
 	nums.AddFirst(35);
+	;
 
 	system("PAUSE");
 }

@@ -32,19 +32,20 @@ public:
 		}
 
 		Node<T>* tail = Head->Prev.get();
-		Node<T>* temp = new Node<T>(value);
+		std::shared_ptr<Node<T>> temp = std::make_shared<Node<T>>(value);
+		//Node<T>* temp = new Node<T>(value);
 
 		temp->Next = move(tail->Next);
 		temp->Prev = move(Head->Prev);
 
-		tail->Next.reset(temp);
-		Head->Prev.reset(temp);
+		tail->Next = temp;
+		Head->Prev = temp;
 	}
 
 	void AddFirst(T value)
 	{
 		AddLast(value);
-	  Head.reset(Head->Prev.get());
+	  Head = Head->Prev;
 	}
 
 	//Circular
@@ -56,12 +57,11 @@ public:
 		}
 		if (count == 1)
 		{
-			Head->Next.reset();
-			Head->Prev.reset();
+			Head = nullptr;
 			return true;
 		}
 
-		Node<T>* next = Head->Next.get();
+		std::shared_ptr<Node<T>> next = Head->Next;
 		Node<T>* prev = Head->Prev.get();
 
 		next->Prev = move(Head->Prev);
@@ -69,7 +69,7 @@ public:
 
 		//delete Head; //possibly not required?
 
-		Head.reset(next);
+		Head = next;
 		count--;
 		return true;
 	}
